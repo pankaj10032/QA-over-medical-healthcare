@@ -1,0 +1,12 @@
+langchain
+openai
+bs4
+requests
+tiktoken
+faiss-cpu
+numpy
+Sentence_transformers
+torch
+transformers
+scikit-learn
+nltk
