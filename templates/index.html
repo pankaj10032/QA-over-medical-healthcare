@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Answering App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #loading {
+            display: none;
+        }
+
+        #answer {
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Question Answering App</h1>
+    <form id="qaForm">
+        <label for="openai_api_key">OpenAI API Key:</label>
+        <input type="text" id="openai_api_key" name="openai_api_key" placeholder="Ex: sk-2twmA8tfCb8un4..." required>
+        <br>
+        <label for="text_input">Text Input:</label>
+        <textarea id="text_input" name="text_input" placeholder="Your text..." required></textarea>
+        <br>
+        <button type="button" onclick="submitForm()">Submit</button>
+        <div id="loading">Loading...</div>
+    </form>
+    <div id="answer"></div>
+
+    <script>
+        function submitForm() {
+            var apiKey = document.getElementById('openai_api_key').value;
+            var textInput = document.getElementById('text_input').value;
+
+            // Basic form validation
+            if (!apiKey || !textInput) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Show loading spinner
+            document.getElementById('loading').style.display = 'block';
+
+            // Disable form elements
+            document.getElementById('openai_api_key').disabled = true;
+            document.getElementById('text_input').disabled = true;
+            document.querySelector('button').disabled = true;
+
+            // Make an AJAX request to your Flask app
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/answer', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Hide loading spinner
+                    document.getElementById('loading').style.display = 'none';
+
+                    // Enable form elements
+                    document.getElementById('openai_api_key').disabled = false;
+                    document.getElementById('text_input').disabled = false;
+                    document.querySelector('button').disabled = false;
+
+                    // Display the answer
+                    document.getElementById('answer').innerHTML = 'Answer: ' + xhr.responseText;
+                }
+            };
+            xhr.send('openai_api_key=' + encodeURIComponent(apiKey) + '&text_input=' + encodeURIComponent(textInput));
+        }
+    </script>
+</body>
+
+</html>
